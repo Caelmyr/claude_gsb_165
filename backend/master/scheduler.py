@@ -217,7 +217,7 @@ class Scheduler:
             "mapper": job.mapper,
             "reducer": job.reducer,
             "params": job.params,
-            "attempt": 0,
+            "attempt": task.attempts,
             "simulate_failure": bool(job.params.get("simulate_failure", False)),
         }
         if task.kind == C.TASK_MAP:

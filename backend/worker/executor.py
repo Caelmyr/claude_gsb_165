@@ -142,7 +142,9 @@ def _run_reduce(spec: dict, progress_cb: ProgressCallback) -> dict:
 def _execute_task(spec: dict, data_root: str, progress_cb: ProgressCallback) -> dict:
     # Fault injection: when a job opts in, the first attempt of every task raises
     # so the fault-recovery path (retry -> reassign) is exercised end to end.
-    if spec.get("simulate_failure"):
+    # Retries (attempt > 0) must run clean, otherwise the injected fault would
+    # recur on every retry and exhaust max_attempts instead of recovering.
+    if spec.get("simulate_failure") and int(spec.get("attempt", 0)) == 0:
         raise RuntimeError("simulated failure for fault-injection demo (attempt 0)")
     if spec.get("kind") == C.TASK_MAP:
         return _run_map(spec, data_root, progress_cb)
